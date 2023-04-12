@@ -1,0 +1,26 @@
+README for Users API
+
+This is a simple RESTful API that allows users to perform CRUD (Create, Read, Update, Delete) operations on a user database. The API is built using PHP and uses JSON for data exchange.
+
+To use the API, you can send HTTP requests to the following endpoints:
+
+GET /users: Retrieves all users in the database.
+GET /users/{id}: Retrieves a single user by ID.
+POST /users: Creates a new user in the database.
+DELETE /users: Deletes all users in the database.
+DELETE /users/{id}: Deletes a single user by ID.
+PUT /users: Updates a user in the database.
+Request parameters:
+
+id: The ID of the user to retrieve or delete.
+name: The name of the user to create or update.
+email: The email of the user to create or update.
+Response format:
+
+The API returns responses in JSON format, with the following structure:
+
+{
+"status": 1, // 0 for error, 1 for success
+"status_message": "Success", // error or success message
+"data": [] // data returned by the API
+}

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    <title>tabletest</title>
+    <style>
+        body {
+            margin-top: 5em;
+        }
+
+        .table {
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="res"> </div>
+    <table class="table" id="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">CRUD</th>
+            </tr>
+        </thead>
+        <tbody id="studentsTableBody">
+
+        </tbody>
+    </table>
+    <form id="addStudentForm" action="" onsubmit="onFormSubmit();">
+        <div class="form-group row">
+
+            <label for="inputNom" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="inputNom">
+            </div>
+
+            <label for="inputPrenom" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="inputEmail">
+            </div>
+
+
+        </div>
+        <button type="submit">Submit</button>
+
+    </form>
+
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+    <script src="config.js"></script>
+    <script>
+        let table;
+        let edit = false;
+        let row;
+        $(document).ready(function () {
+            initTable();
+        })
+        function initTable() {
+            table = $('#table').DataTable({
+                ajax: chemin + "/users",
+                dataSrc: '',
+                dom: 'Bfrtip',
+                columns: [
+                    { "data": "id" },
+                    { "data": "name" },
+                    { "data": "email" },
+                    {
+                        "data": "id", "render": function (data) {
+                            return '<button type="button" id="' + data + '" class="edit" >edit</button> <button type="button" id="' + data + '" class="delete" >delete</button>'
+                        }
+                    }
+                ]
+
+
+            });
+
+        };
+
+
+
+        function onFormSubmit() {
+            if (edit) {
+                let id = row.find("td:eq(0)").text();
+                let name = $("#inputNom").val();
+                let email = $("#inputEmail").val();
+                $("#inputNom").val('');
+                $("#inputEmail").val('');
+                event.preventDefault();
+                var data = {
+                    "name": name,
+                    "email": email,
+                    "id": id
+                }
+                $.ajax({
+                    url: chemin + "/users",
+                    async: false,
+                    method: "PUT",
+
+
+                    dataType: "json",
+                    data: JSON.stringify(data),
+                });
+                table.destroy();
+                initTable();
+            }
+            else {
+                event.preventDefault();
+                let nom = $("#inputNom").val();
+                let email = $("#inputEmail").val();
+                $("#inputNom").val('');
+                $("#inputEmail").val('');
+
+                $.ajax({
+                    url: chemin + "/users",
+
+                    method: "POST",
+
+
+                    dataType: "json",
+                    data:
+                    {
+                        "name": nom,
+                        "email": email,
+                    },
+                });
+                table.destroy();
+                initTable();
+            }
+        };
+
+        $(document).on("click", ".delete", deleteElement);
+        $(document).on("click", ".edit", updateElement);
+
+        function deleteElement() {
+
+            // get the closest <tr> element to the clicked button
+            var id = $(event.target).attr('id');
+            // remove the <tr> element
+
+            $.ajax({
+                url: chemin + `/users?id=${id}`,
+
+                method: "DELETE",
+
+
+                dataType: "json",
+
+            })
+                .done(function (response) {
+                    table.destroy();
+                    initTable();
+                })
+
+
+                .fail(function (error) {
+                    alert("La requête s'est terminée en échec. Infos : " + JSON.stringify(error));
+                })
+
+
+                .always(function () {
+                    //alert("Requête effectuée");
+                })
+
+
+
+        }
+        function updateElement() {
+            row = $(event.target).closest("tr");
+            let id = row.find("td:eq(0)").text();
+            let name = row.find("td:eq(1)").text();
+            let email = row.find("td:eq(2)").text();
+            $("#inputNom").val(name);
+            $("#inputEmail").val(email);
+            edit = true;
+
+        }
+
+
+    </script>
+</body>
+
+</html>

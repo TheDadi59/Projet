@@ -1,0 +1,14 @@
+.menu{
+    display: flex;
+}
+#currentPage{
+    color: green;
+}
+body{
+    background-color: rgba(223, 145, 10, 0.998);
+}
+.contenu{
+    color:aqua;
+    font-size: 30px;
+    text-align: center;
+}
