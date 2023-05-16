@@ -8,15 +8,8 @@ switch ($request_method) {
         $id = intval($_GET["id_user"]);
         getSommeConsomme($id);
       } else {
-        if(!empty($_GET["date"]))
-        {
-          $id = intval($_GET["id_user"]);
-          $date = intval($_GET["date"]);
-          getConsomme($id,$date);
-        }else{
-          $id = intval($_GET["id_user"]);
-          getConsomme($id);
-        }
+        $id = intval($_GET["id_user"]);
+        getConsomme($id);
       }
       
     } else {
@@ -49,7 +42,7 @@ switch ($request_method) {
     break;
 }
 
-function getConsomme($id = null,$date = null)
+function getConsomme($id = null)
 {
   require_once('init_pdo.php');
   if ($id === null) {
@@ -62,10 +55,6 @@ function getConsomme($id = null,$date = null)
     JOIN aliments ON consomme.id_alim = aliments.id 
     WHERE id_user = $id");
   }
-  if ($date !== null) {
-    $query .= "AND consomme.date_consommation BETWEEN '$date' AND NOW()";
-  }
-
   $query->execute();
   $response = array();
   $response = $query->fetchAll();
